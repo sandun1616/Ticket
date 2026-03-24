@@ -1,0 +1,24 @@
+flowchart LR
+  Browser["Browser / Client"] -->|HTTP| Public["public/index.php"]
+  Public --> Router["Routing\nroutes/web.php"]
+  Router --> Controller["Controllers\napp/Http/Controllers"]
+  Controller --> Model["Eloquent Models\napp/Models (Ticket, User)"]
+  Model --> DB["Database\n(database/migrations)"]
+  Controller --> View["Blade Views\nresources/views"]
+  Controller --> Mail["Mailables\napp/Mail (TicketCreated, TicketStatusUpdated)"]
+  Controller --> Export["Exports\napp/Exports (TicketExport)"]
+  Controller --> Jobs["Jobs / Queued Work\n(artisan queue:work)"]
+  Jobs --> QueueWorker["Queue Worker / Scheduler\nartisan queue:work / schedule:run"]
+  IMAP["IMAP Ingest\nconfig/imap.php (webklex)"] -->|Incoming email -> jobs| Jobs
+  Assets["Frontend Assets\nresources/js, resources/css\nvite.config.js"] --> Vite["Vite (npm run dev/build)"]
+  Vite --> Public
+  Export --> Storage["Storage / Downloads\nstorage/"]
+  Mail --> SMTP["SMTP / Mail Driver\nconfig/mail.php"]
+  PDF["PDF Generator\nbarryvdh/laravel-dompdf"]
+  Export --> PDF
+  classDef infra fill:#f4f4f8,stroke:#333,stroke-width:1px;
+  classDef lib fill:#fff7e6,stroke:#c69c00,stroke-width:1px;
+  classDef storage fill:#e6f7ff,stroke:#007acc,stroke-width:1px;
+  class Public,Router,Controller,Model,View,Jobs,Assets,Vite infra;
+  class IMAP,PDF lib;
+  class DB,Storage storage;
